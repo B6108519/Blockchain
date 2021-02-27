@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <header><center><h1>Tyler1 Cafe</h1></center></header>
+    <script src="./node_modules/web3/dist/web3.min.js">
+    </script>
+
+</head>
+
+<body >
+    <center>
+                <table border="1" width="700px">
+                    <tr bgcolor="green">
+                        <th><b>FOOB</b></th>
+                        <th>DRINK</b></th>
+                    </tr>
+                    <tr align="center">
+                        <td><img src="\pic\t1m1.jpg" height="150" width="200">
+                            <br>T1 Saghetti<br>
+                            <button id="order1" value="T1 Saghetti" name="T1 Saghetti">0.05 eth</button>
+                        <td><img src="\pic\t1d1.jpg" height="150" width="200">
+                            <br>T1 Blueberry Milkshake<br>
+                            <button id="order2" value="T1 Blueberry Milkshake" name="T1 Blueberry Milkshake">0.022 eth</button>
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td><img src="\pic\t1m2.jpg" height="150" width="200">
+                            <br>T1 Chocolate Cake<br>
+                            <button id="order3" value="T1 Chocolate Cake" name="T1 Chocolate Cake">0.08 eth</button>
+                        <td><img src="\pic\t1d2.jpg" height="150" width="200">
+                            <br>T1 Water<br>
+                            <button id="order4" value="T1 Water" name="T1 Water">0.007 eth</button>
+                        </td>
+                    </tr>
+                    <tr align="center">
+                        <td><img src="\pic\t1m3.jpg" height="150" width="200">
+                            <br>T1 BBQ<br>
+                            <button id="order5" value="T1 BBQ" name="T1 BBQ">0.01 eth</button>
+                        <td><img src="\pic\t1d3.jpg" height="150" width="200">
+                            <br>T1 Protein Drink<br>
+                            <button id="order6" value="T1 Protein Drink" name="T1 Protein Drink">0.099 eth</button>
+                        </td>
+                    </tr>
+                </table>
+    
+        <center>
+            <b>Purchase History</b>
+            <table class="center" id="TableOrder" border="1" width="650px" align="center">
+                <tr bgcolor="blue">
+                    <td><label class="cafe"><b>No.</b></label></td>
+                    <td><label class="cafe"><b>Date time</b></label></td>
+                    <td><label class="cafe"><b>List</b></label></td>
+                    <td><label class="cafe"><b>Customer</b></label></td>
+                </tr>
+            </table>
+
+            <h6>refresh to update table</h6>
+        </center>
+    </center>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js">
+    </script>
+    <script>
+        function insertData(n, o) {
+            var name = n;
+            var address = o;
+            var dt = new Date();
+            document.getElementById("insertionPoint").innerHTML += "<tr><td>" + dt.toLocaleTimeString() + "</td><td>" + name + "</td><td>" + address + "</td><tr>";
+        }
+    </script>
+    <script>
+        if (typeof web3 !== 'undefined') {
+            // this statement is executed if you are using 
+            // MetaMask 
+            async function enableAccounts() {
+                await ethereum.enable()
+            }
+            enableAccounts();
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(
+                new Web3.providers.HttpProvider(
+                    "http://localhost:8545"));
+        }
+
+        let abi = [
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getName",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [
+                    {
+                        "name": "name",
+                        "type": "string"
+                    }
+                ],
+                "name": "GetOrder",
+                "outputs": [],
+                "payable": true,
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [],
+                "name": "getOrderCount",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getTimestamp",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "constant": true,
+                "inputs": [
+                    {
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getAddress",
+                "outputs": [
+                    {
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "payable": false,
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "text",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "datetime",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "hash",
+                        "type": "bytes32"
+                    }
+                ],
+                "name": "OrderAdded",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "name": "from",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "text",
+                        "type": "string"
+                    },
+                    {
+                        "indexed": false,
+                        "name": "reason",
+                        "type": "string"
+                    }
+                ],
+                "name": "OrderError",
+                "type": "event"
+            }
+        ];
+        var contract = web3.eth.contract(abi);
+        var myContract = contract.at(
+            '0x5A043F346B47643a65513693304E118c6E45cb3B');
+
+        var completeEvent =
+            myContract.OrderAdded();
+
+        var refreshtable = false;
+
+        completeEvent.watch(function (error, result) {
+            if (!error) {
+                //$("#result").html("Got it");               
+                if (result.args.from == web3.eth.defaultAccount) {
+                    $("#result").html("Order >> " + result.args.text);
+                    if (refreshtable == true) {
+                        insertData(result.args.text, result.args.from);
+                        refreshtable = false;
+                    }
+                }
+            }
+        });
+
+        var errorEvent =
+            myContract.OrderError();
+
+        errorEvent.watch(function (error, result) {
+            if (!error) {
+                if (result.args.from ==
+                    web3.eth.defaultAccount) {
+                    $("#result").html(
+                        "Error. <br/> Name: " +
+                        result.args.text +
+                        "<br/> Reason: " + result.args.reason);
+                }
+            }
+        });
+
+        $("#order1").click(function () { SendOrder(50000000000000000, "T1 Saghetti") });
+        $("#order2").click(function () { SendOrder(22000000000000000, "T1 Blueberry Milkshake") });
+        $("#order3").click(function () { SendOrder(80000000000000000, "T1 Chocolate Cake") });
+        $("#order4").click(function () { SendOrder(7000000000000000, "T1 Water") });
+        $("#order5").click(function () { SendOrder(10000000000000000, "T1 BBQ") });
+        $("#order6").click(function () { SendOrder(99000000000000000, "T1 Protein Drink") });
+
+        async function GetvalueOrder() {
+
+            var timestamp;
+            var ordername;
+            var owner;
+            var i = 0;
+
+            await ResetTable();
+            myContract.getOrderCount((error, result) => {
+                if (!error) {
+                    setTimeout(function () {
+                        selectOrder(parseInt(result.toString()));
+                    }, 500);
+                }
+                else
+                    console.error(error);
+            });
+
+            function selectOrder(index) {
+                if (index > 0) {
+                    myContract.getTimestamp(i, (error, result) => {
+                        if (!error) {
+                            timestamp = ConvertTimestamp(result);
+                            myContract.getName(i, (error, result) => {
+                                if (!error) {
+                                    ordername = result.toString();
+                                    myContract.getAddress(i, (error, result) => {
+                                        if (!error) {
+                                            owner = result.toString();
+                                            if (i < index) {
+                                                listOrder(timestamp, ordername, owner);
+                                                i++;
+                                                selectOrder(index);
+                                            }
+                                        }
+                                        else
+                                            console.error(error);
+                                    });
+                                }
+                                else
+                                    console.error(error);
+                            });
+                        }
+                        else
+                            console.error(error);
+                    });
+                }
+            }
+
+        }
+
+        function SendOrder(value, ordername) {
+            refreshtable = true;
+            myContract.GetOrder(ordername,
+                {
+                    gas: 300000,
+                    from: web3.eth.accounts[0],
+                    value: value
+                }, (error, result) => {
+                    $("#result").html("Order pending confirmation.....");
+                });
+        }
+
+        function listOrder(timestamp, ordername, owner, i) {
+            var queueOrder = document.getElementById("TableOrder");
+
+            var r_count = queueOrder.rows.length;
+            console.log("r_count");
+            console.log(r_count);
+            var row = queueOrder.insertRow(r_count);
+
+            row.insertCell(0).innerHTML = r_count;
+            row.insertCell(1).innerHTML = timestamp;
+            row.insertCell(2).innerHTML = ordername;
+            row.insertCell(3).innerHTML = owner;
+        }
+
+        function ResetTable() {
+            var queueOrder = document.getElementById("TableOrder");
+
+            while (queueOrder.rows.length > 1) {
+                queueOrder.deleteRow(queueOrder.rows.length - 1);
+            }
+        }
+
+        function ConvertTimestamp(timestamp) {
+            var mon = ["January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"];
+
+            var timeconvert = new Date(timestamp * 1000)
+
+            return (timeconvert.getDate().toString() + " " +
+                mon[timeconvert.getMonth() + 1] + " " +
+                timeconvert.getFullYear().toString() + "   " +
+                (timeconvert.getHours() % 10 == timeconvert.getHours() ? "0" +
+                    timeconvert.getHours().toString() : timeconvert.getHours().toString()) + ":" +
+                (timeconvert.getMinutes() % 10 == timeconvert.getMinutes() ? "0" +
+                    timeconvert.getMinutes().toString() : timeconvert.getMinutes().toString())
+            )
+        }
+
+        window.onload = GetvalueOrder();
+
+    </script>
+</body>
+
+</html>
